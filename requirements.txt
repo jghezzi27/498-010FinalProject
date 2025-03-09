@@ -1,0 +1,5 @@
+werkzeug
+flask
+requests
+opencv-python
+face_recognition
