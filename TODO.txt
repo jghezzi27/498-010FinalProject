@@ -3,3 +3,15 @@ Features to Add:
 - Test with the actual hardware's images
 - Verify which user's lock is coming in
 - Allow "users" with a variety of faces that give permission to a given lock
+
+Data Structure for server startup:
+map (lock_id to lock data structure)
+    lock (array of users)
+        user (array of images)
+            image (string [filename])
+
+Data Structure for server verification
+map (lock_id to lock data structure)
+    lock (array of users)
+        user (array of encodings)
+            encoding (encodings of user's face from varoius images)
