@@ -1,13 +1,23 @@
 from flask import Flask, request, jsonify
 import os
+import shutil
 from werkzeug.utils import secure_filename
 import face_recognition
 import numpy as np
+import datetime
+
 
 # Load in valid faces
-valid_photo = "photos/new0.jpg"
-valid_image = face_recognition.load_image_file(valid_photo)
-valid_encodings = face_recognition.face_encodings(valid_image)
+valid_photos = ["photos/new0.jpg", "photos/new3.jpg"]
+valid_encodings = []
+for photo in valid_photos:
+    image = face_recognition.load_image_file(photo)
+    encodings = face_recognition.face_encodings(image)
+    if len(encodings) == 0:
+        continue
+    for enc in encodings:
+        valid_encodings.append(enc)
+
 if len(valid_encodings) == 0:
     print("ERROR: No Valid Face")
     exit(1)
@@ -29,6 +39,16 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+# Function to move a file to a subdirectory
+def move_to(file_path, subfolder):
+    path_name = os.path.dirname(file_path)
+    path_name = os.path.join(path_name, subfolder)
+    os.makedirs(path_name, exist_ok=True)
+    moved_file = os.path.join(path_name, os.path.basename(file_path))
+    shutil.move(file_path, moved_file)
+
+
 # Endpoint to handle image upload
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -44,9 +64,14 @@ def upload_file():
 
     # If the file is valid
     if file and allowed_file(file.filename):
+        # Add timestamp to filename
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+        file_name, file_extension = os.path.splitext(file.filename)
+        new_filename = f"{file_name}_{timestamp}{file_extension}"
+
         # Secure the filename to prevent directory traversal
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        filename = secure_filename(new_filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], new_filename)
         
         # Save the file to the upload folder
         file.save(file_path)
@@ -56,6 +81,7 @@ def upload_file():
         test_encodings = face_recognition.face_encodings(test_image)
 
         if len(test_encodings) == 0:
+            move_to(file_path, "faceless")
             return jsonify({'message': f'No Faces found within image! Saved as {filename}'}), 200
 
         permission = False
@@ -64,11 +90,13 @@ def upload_file():
             for res in results:
                 if res == np.True_:
                     permission = True
-            print(f"{valid_photo}, {file_path}-{i}: {results}")
+            print(f"{file_path}-{i}: {results}")
         
         if permission:
+            move_to(file_path, "success")
             return jsonify({'message': f'Permission Granted! Saved as {filename}'}), 200
         else:
+            move_to(file_path, "failure")
             return jsonify({'message': f'Permission NOT Granted! Saved as {filename}'}), 200
     else:
         return jsonify({'error': 'Invalid file format. Only jpg, jpeg, and png are allowed.'}), 400
