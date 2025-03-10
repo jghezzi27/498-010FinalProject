@@ -1,3 +1,5 @@
+# Simulates a client (a real client will be the ESP32 CAM Module)
+
 import requests
 import os
 

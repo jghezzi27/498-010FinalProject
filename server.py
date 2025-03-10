@@ -1,13 +1,14 @@
+# Hosts a server that receives images and sends responses
 from flask import Flask, request, jsonify
-import os
-import shutil
 from werkzeug.utils import secure_filename
-import face_recognition
-import numpy as np
+import os
 import datetime
+from decider import Decider, Result
 
+# Initialize the Flask app
+app = Flask(__name__)
 
-# Load in valid faces
+# Initialize Decider
 dataIn = {
     "lock1": {
         "Joe": ["photos/new0.jpg"],
@@ -15,36 +16,7 @@ dataIn = {
     },
 }
 
-valid_encodings = {}
-for lock_id in dataIn:
-    users = dataIn[lock_id]
-    userMap = {}
-    for user in users:
-        user_images = users[user]
-        user_encodings = []
-
-        for photo in user_images:
-            image = face_recognition.load_image_file(photo)
-            encodings = face_recognition.face_encodings(image)
-            if len(encodings) == 0:
-                continue
-            for enc in encodings:
-                user_encodings.append(enc)
-
-        if len(user_encodings) != 0:
-            userMap[user] = user_encodings
-    if len(userMap) == 0:
-        print(f"ERROR: No Valid Faces For Lock {lock_id}")
-    else:
-        valid_encodings[lock_id] = userMap
-
-if len(valid_encodings) == 0:
-    print(f"ERROR: No Valid Faces For Any Locks")
-    exit(1)
-
-
-# Initialize the Flask app
-app = Flask(__name__)
+decider = Decider(dataIn)
 
 # Set the upload folder and allowed file extensions
 UPLOAD_FOLDER = 'uploads'
@@ -60,34 +32,21 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-# Function to move a file to a subdirectory
-def move_to(file_path, subfolder):
-    path_name = os.path.dirname(file_path)
-    path_name = os.path.join(path_name, subfolder)
-    os.makedirs(path_name, exist_ok=True)
-    moved_file = os.path.join(path_name, os.path.basename(file_path))
-    shutil.move(file_path, moved_file)
-
-
 # Endpoint to handle image upload
 @app.route('/upload', methods=['POST'])
 def upload_file():
     # Check if the 'image' part exists in the form
     if 'image' not in request.files:
-        return jsonify({'Error': 'No image part in request'}), 400
+        return jsonify({'error': 'No image part in request'}), 400
 
     file = request.files['image']
 
     # If no file is selected
     if file.filename == '':
-        return jsonify({'Error': 'No selected file'}), 400
+        return jsonify({'error': 'No selected file'}), 400
 
     if 'lock_id' not in request.form:
-        return jsonify({'Error': 'No lock_id in request'}), 400
-
-    lock_id = request.form["lock_id"]
-    if lock_id not in valid_encodings:
-        return jsonify({'Error': f"No lock with id {lock_id}"}), 400
+        return jsonify({'error': 'No lock_id in request'}), 400
 
     # If the file is valid
     if file and allowed_file(file.filename):
@@ -103,26 +62,13 @@ def upload_file():
         # Save the file to the upload folder
         file.save(file_path)
 
-        # Verify Photo
-        test_image = face_recognition.load_image_file(file_path)
-        test_encodings = face_recognition.face_encodings(test_image)
+        # Get permission for file
+        lock_id = request.form["lock_id"]
+        status, message = decider.Decide(lock_id, file_path)
+        if status == Result.DECIDED:
+            return jsonify({'message': message}), 200
+        return jsonify({'error': message}), 400            
 
-        if len(test_encodings) == 0:
-            move_to(file_path, "faceless")
-            return jsonify({'message': f'No Faces found within image!'}), 200
-
-        users = valid_encodings[lock_id]
-        for user in users:
-            user_encodings = valid_encodings[lock_id][user]
-            for i in range(len(test_encodings)):
-                results = face_recognition.compare_faces(user_encodings, test_encodings[i])
-                for res in results:
-                    if res == np.True_:
-                        move_to(file_path, "success")
-                        return jsonify({'message': f'Permission Granted {lock_id}:{user}!'}), 200
-        else:
-            move_to(file_path, "failure")
-            return jsonify({'message': f'Permission NOT Granted to {lock_id}!'}), 200
     else:
         return jsonify({'error': 'Invalid file format. Only jpg, jpeg, and png are allowed.'}), 400
 
