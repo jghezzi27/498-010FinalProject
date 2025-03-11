@@ -31,6 +31,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/')
+def home():
+    return "iLokd Server"
 
 # Endpoint to handle image upload
 @app.route('/upload', methods=['POST'])
