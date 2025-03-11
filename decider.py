@@ -6,8 +6,10 @@ import face_recognition
 from enum import Enum
 
 class Result(Enum):
-    DECIDED = 0
-    ERROR = 1
+    SUCCESS = 0,
+    FAILURE = 1,
+    NOFACE = 2,
+    ERROR = -1
 
 # Function to move a file to a subdirectory
 def move_to(file_path, subfolder):
@@ -64,7 +66,7 @@ class Decider:
 
         if len(test_encodings) == 0:
             move_to(file_path, os.path.join(lock_id, "faceless"))
-            return (Result.DECIDED, f'No Faces found within image!')
+            return (Result.NOFACE, f'No Faces found within image!')
 
         users = self.valid_encodings[lock_id]
         for user in users:
@@ -74,7 +76,7 @@ class Decider:
                 for res in results:
                     if res == np.True_:
                         move_to(file_path, os.path.join(lock_id, "success", user))
-                        return (Result.DECIDED, f'Permission Granted {lock_id}:{user}!')
+                        return (Result.SUCCESS, f'Permission Granted {lock_id}:{user}!')
         else:
             move_to(file_path, os.path.join(lock_id, "failure"))
-            return (Result.DECIDED, f'Permission NOT Granted to {lock_id}!')
+            return (Result.FAILURE, f'Permission NOT Granted to {lock_id}!')

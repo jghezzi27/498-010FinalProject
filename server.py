@@ -65,9 +65,9 @@ def upload_file():
         # Get permission for file
         lock_id = request.form["lock_id"]
         status, message = decider.Decide(lock_id, file_path)
-        if status == Result.DECIDED:
-            return jsonify({'message': message}), 200
-        return jsonify({'error': message}), 400            
+        if status == Result.ERROR:
+            return jsonify({'error': message}), 400
+        return jsonify({'message': message}), 200          
 
     else:
         return jsonify({'error': 'Invalid file format. Only jpg, jpeg, and png are allowed.'}), 400
