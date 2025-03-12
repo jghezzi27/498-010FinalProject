@@ -8,15 +8,7 @@ from decider import Decider, Result
 # Initialize the Flask app
 app = Flask(__name__)
 
-# Initialize Decider
-dataIn = {
-    "lock1": {
-        "Joe": ["photos/new0.jpg"],
-        "Helen": ["photos/new3.jpg"]
-    },
-}
-
-decider = Decider(dataIn)
+decider = Decider()
 
 # Set the upload folder and allowed file extensions
 UPLOAD_FOLDER = 'uploads'
@@ -31,9 +23,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 @app.route('/')
 def home():
     return "iLokd Server"
+
 
 # Endpoint to handle image upload
 @app.route('/upload', methods=['POST'])
@@ -67,10 +61,10 @@ def upload_file():
 
         # Get permission for file
         lock_id = request.form["lock_id"]
-        status, message = decider.Decide(lock_id, file_path)
-        if status == Result.ERROR:
-            return jsonify({'error': message}), 400
-        return jsonify({'message': message}), 200          
+        res = decider.Decide(lock_id, file_path)
+        if res == Result.ERROR:
+            return jsonify({'message': res.name}), 400
+        return jsonify({'message': res.name}), 200          
 
     else:
         return jsonify({'error': 'Invalid file format. Only jpg, jpeg, and png are allowed.'}), 400

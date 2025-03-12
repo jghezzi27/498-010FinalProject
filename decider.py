@@ -24,8 +24,16 @@ def move_to(file_path, subfolder):
 class Decider:
     valid_encodings: dict
 
-    def __init__(self, dataIn):
+    def __init__(self):
         self.valid_encodings = {}
+        # Initialize Decider
+        dataIn = {
+            "lock1": {
+                "Joe": ["photos/new0.jpg"],
+                "Helen": ["photos/new3.jpg"]
+            },
+        }
+
         for lock_id in dataIn:
             users = dataIn[lock_id]
             userMap = {}
@@ -58,7 +66,7 @@ class Decider:
     def Decide(self, lock_id, file_path):
         if lock_id not in self.valid_encodings:
             move_to(file_path, "error")
-            return (Result.ERROR, f"No lock with id {lock_id}")
+            return Result.ERROR
 
         # Verify Photo
         test_image = face_recognition.load_image_file(file_path)
@@ -66,7 +74,7 @@ class Decider:
 
         if len(test_encodings) == 0:
             move_to(file_path, os.path.join(lock_id, "faceless"))
-            return (Result.NOFACE, f'No Faces found within image!')
+            return Result.NOFACE
 
         users = self.valid_encodings[lock_id]
         for user in users:
@@ -76,7 +84,7 @@ class Decider:
                 for res in results:
                     if res == np.True_:
                         move_to(file_path, os.path.join(lock_id, "success", user))
-                        return (Result.SUCCESS, f'Permission Granted {lock_id}:{user}!')
+                        return Result.SUCCESS
         else:
             move_to(file_path, os.path.join(lock_id, "failure"))
-            return (Result.FAILURE, f'Permission NOT Granted to {lock_id}!')
+            return Result.FAILURE
