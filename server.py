@@ -3,7 +3,8 @@ from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 import os
 import datetime
-from decider import Decider, Result
+from decider import Decider
+from utils import Result
 
 # Initialize the Flask app
 app = Flask(__name__)

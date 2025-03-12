@@ -2,6 +2,7 @@
 
 import requests
 import os
+import time
 
 # Replace with your server's endpoint URL
 url = 'http://127.0.0.1:5000/upload'  # Update with your server URL
@@ -18,11 +19,14 @@ for image_name in files:
         data = {"lock_id": "lock1"}
 
         # Send the POST request with the image file
+        sendTime = time.time()
         response = requests.post(url, files=files, data=data)
+        returnTime = time.time()
+        duration = returnTime - sendTime
 
         # Print the server's response
         if response.status_code == 200:
-            print(response.text)
+            print(f"{image_name}:\n\tResult: {response.json()['message']}\n\tLatency: {duration} s")
         else:
             print(f'Error: {response.status_code}')
-            print(response.text)
+            print(f"{image_name}:\n\tResult: {response.json()['error']}\n\tLatency: {duration} s")

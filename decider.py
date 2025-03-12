@@ -3,13 +3,7 @@ import os
 import shutil
 import numpy as np
 import face_recognition
-from enum import Enum
-
-class Result(Enum):
-    SUCCESS = 0,
-    FAILURE = 1,
-    NOFACE = 2,
-    ERROR = -1
+from utils import Result
 
 # Function to move a file to a subdirectory
 def move_to(file_path, subfolder):
