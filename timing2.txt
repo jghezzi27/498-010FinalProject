@@ -1,0 +1,75 @@
+test3.jpg:
+	Result: FAILURE
+	Latency: 5.477768898010254 s
+image_20250312_150319.jpg:
+	Result: SUCCESS
+	Latency: 0.5217068195343018 s
+test6.png:
+	Result: SUCCESS
+	Latency: 0.5508980751037598 s
+image_20250312_150302.jpg:
+	Result: SUCCESS
+	Latency: 0.4428224563598633 s
+image_20250312_150211.jpg:
+	Result: SUCCESS
+	Latency: 0.43520569801330566 s
+image_20250312_150228.jpg:
+	Result: SUCCESS
+	Latency: 0.4319798946380615 s
+image_20250312_150239.jpg:
+	Result: SUCCESS
+	Latency: 0.4740874767303467 s
+new2.jpg:
+	Result: FAILURE
+	Latency: 0.42805910110473633 s
+image_20250312_150217.jpg:
+	Result: SUCCESS
+	Latency: 0.445220947265625 s
+image_20250312_150234.jpg:
+	Result: NOFACE
+	Latency: 0.38835978507995605 s
+test0.jpg:
+	Result: NOFACE
+	Latency: 3.1382718086242676 s
+image_20250311_214914.jpg:
+	Result: SUCCESS
+	Latency: 0.4535374641418457 s
+image_20250311_212117.jpg:
+	Result: NOFACE
+	Latency: 0.3466975688934326 s
+image_20250312_150223.jpg:
+	Result: SUCCESS
+	Latency: 0.4560375213623047 s
+image_20250311_212422.jpg:
+	Result: NOFACE
+	Latency: 0.3420422077178955 s
+test2.jpg:
+	Result: NOFACE
+	Latency: 5.299368381500244 s
+new4.jpg:
+	Result: SUCCESS
+	Latency: 0.5533971786499023 s
+test5.png:
+	Result: SUCCESS
+	Latency: 0.5678219795227051 s
+test1.jpg:
+	Result: FAILURE
+	Latency: 3.332487106323242 s
+test4.jpg:
+	Result: FAILURE
+	Latency: 5.662557125091553 s
+new1.jpg:
+	Result: SUCCESS
+	Latency: 1.1638329029083252 s
+image_20250312_150245.jpg:
+	Result: SUCCESS
+	Latency: 0.4585871696472168 s
+new3.jpg:
+	Result: SUCCESS
+	Latency: 0.6967389583587646 s
+image_20250312_150206.jpg:
+	Result: SUCCESS
+	Latency: 0.5094048976898193 s
+new0.jpg:
+	Result: SUCCESS
+	Latency: 2.6686246395111084 s
