@@ -81,4 +81,4 @@ class Decider:
                         return Result.SUCCESS
         else:
             move_to(file_path, os.path.join(lock_id, "failure"))
-            return Result.FAILURE
+            return Result.FAIL

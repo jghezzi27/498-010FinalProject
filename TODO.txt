@@ -1,4 +1,3 @@
 Features to Add:
-- Test with the actual hardware's images
-- Server tracks success/failure
+- Server tracks success/failure?
     - With too many failures (containing faces), take action (such as "notifying user" and only sending failures)
