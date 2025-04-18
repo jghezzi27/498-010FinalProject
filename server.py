@@ -3,7 +3,8 @@ from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 import os
 import datetime
-from decider import Decider
+# from decider import Decider
+from decider2 import Decider
 from utils import Result
 
 # Initialize the Flask app
@@ -60,7 +61,7 @@ def upload_file():
         # Save the file to the upload folder
         file.save(file_path)
 
-        # Get permission for file
+        # Get permission result for file
         lock_id = request.form["lock_id"]
         res = decider.Decide(lock_id, file_path)
         if res == Result.ERROR:
@@ -71,4 +72,5 @@ def upload_file():
         return jsonify({'error': 'Invalid file format. Only jpg, jpeg, and png are allowed.'}), 400
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)  # Run on all available IPs on port 5000
+    # Run on all available IPs on port 5000
+    app.run(host='0.0.0.0', port=5000)
