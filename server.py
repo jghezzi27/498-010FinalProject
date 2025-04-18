@@ -1,5 +1,5 @@
 # Hosts a server that receives images and sends responses
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 import os
 import datetime
@@ -7,7 +7,6 @@ import datetime
 from decider2 import Decider
 from utils import Result
 
-# Initialize the Flask app
 app = Flask(__name__)
 
 decider = Decider()
@@ -18,7 +17,6 @@ ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}
 
 # Ensure the upload folder exists
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Function to check allowed file extensions
@@ -28,8 +26,11 @@ def allowed_file(filename):
 
 @app.route('/')
 def home():
-    return "iLokd Server"
+    return "<p>iLokd Server</p>"
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(".", 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 # Endpoint to handle image upload
 @app.route('/upload', methods=['POST'])

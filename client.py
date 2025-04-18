@@ -4,8 +4,7 @@ import requests
 import os
 import time
 
-# Replace with your server's endpoint URL
-url = 'http://127.0.0.1:5000/upload'  # Update with your server URL
+url = 'http://127.0.0.1:5000/upload'
 
 photo_dir = "photos"
 
