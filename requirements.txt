@@ -3,3 +3,5 @@ flask
 requests
 opencv-python
 face_recognition
+deepface
+tf-keras
