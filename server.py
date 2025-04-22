@@ -3,8 +3,8 @@ from flask import Flask, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 import os
 import datetime
-# from decider import Decider
-from decider2 import Decider
+from decider import Decider
+# from decider2 import Decider
 from utils import Result
 
 app = Flask(__name__)
