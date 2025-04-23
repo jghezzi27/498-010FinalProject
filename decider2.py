@@ -26,7 +26,7 @@ class Decider:
         # Print the results
         min_distance = results[0]['distance'].min()
 
-        if results and results[0]['distance'].min() < 0.50:  # Adjust threshold as needed
+        if results and results[0]['distance'].min() < 0.35:  # Adjust threshold as needed
             return Result.SUCCESS
         else:
             return Result.FAIL
